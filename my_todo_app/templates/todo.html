@@ -1,0 +1,135 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-ZUB6toFtjQzl2r39XcCNK7sM7LDT1LLD9sFZ4ypmn1Jtf9iVJkEbgfK0lRNlJrL4Cg67Tzhl/d4lw7xN7jBLFQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <title>Task List</title>
+    <style>
+        body {
+            font-family: Comfortaa, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+    
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 15px 0; /* Added more padding */
+            text-align: center;
+            display: flex; /* Center vertically */
+            align-items: center; /* Center vertically */
+            justify-content: center; /* Center horizontally */
+        }
+    
+        main {
+            max-width: 800px; /* Increased max-width */
+            margin: 20px auto;
+            padding: 30px; /* Increased padding */
+            background-color: #fff;
+            border-radius: 10px; /* Increased border-radius */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Increased box shadow */
+        }
+    
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+    
+        li {
+            margin-bottom: 10px;
+        }
+    
+        form {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping for smaller screens */
+            align-items: center;
+            justify-content: space-between; /* Distribute elements evenly */
+        }
+    
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+    
+        input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+        }
+    
+        button {
+            padding: 10px 20px; /* Adjusted padding */
+            border: none;
+            background-color: #333;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    
+        button:hover {
+            background-color: #00b336de;
+        }
+    
+        .logout-button {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 15px;
+            background-color: #555;
+            border-radius: 5px;
+        }
+        .logout-button:hover {
+            background-color: #d10000;
+        }
+    </style>
+    
+</head>
+<body>
+    <header>
+        <h1>To-Do List</h1>
+        <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
+    </header>
+
+    <main>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('todo_list') }}" method="POST">
+            <label for="new-task">New Task:</label>
+            <div>
+                <input type="text" id="new-task" name="new_task" required>
+                <button type="submit">Add Task</button>
+            </div>
+        </form>
+
+        <ul>
+            {% for task in tasks %}
+                <li>
+                    {{ task.text }} - {{ task.timestamp }}
+                    <form action="{{ url_for('update_task', task_id=task.id) }}" method="POST">
+                        <input type="text" name="updated_task" placeholder="Update Task" required>
+                        <button type="submit">Update</button>
+                    </form>
+                    <form action="{{ url_for('delete_task', task_id=task.id) }}" method="POST">
+                        <button type="submit">Complete/Delete</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    </main>
+</body>
+</html>
